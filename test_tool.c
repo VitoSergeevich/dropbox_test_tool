@@ -1,17 +1,17 @@
-//Консольная утилита, которая
-//позволяет загружать в/скачивать из Dropbox произвольный двоичный файл
-//(произвольного формата и размера) с помощью формирования HTTP-запросов
-//к REST API, т.е. не используя оберточных библиотек
+//РљРѕРЅСЃРѕР»СЊРЅР°СЏ СѓС‚РёР»РёС‚Р°, РєРѕС‚РѕСЂР°СЏ
+//РїРѕР·РІРѕР»СЏРµС‚ Р·Р°РіСЂСѓР¶Р°С‚СЊ РІ/СЃРєР°С‡РёРІР°С‚СЊ РёР· Dropbox РїСЂРѕРёР·РІРѕР»СЊРЅС‹Р№ РґРІРѕРёС‡РЅС‹Р№ С„Р°Р№Р»
+//(РїСЂРѕРёР·РІРѕР»СЊРЅРѕРіРѕ С„РѕСЂРјР°С‚Р° Рё СЂР°Р·РјРµСЂР°) СЃ РїРѕРјРѕС‰СЊСЋ С„РѕСЂРјРёСЂРѕРІР°РЅРёСЏ HTTP-Р·Р°РїСЂРѕСЃРѕРІ
+//Рє REST API, С‚.Рµ. РЅРµ РёСЃРїРѕР»СЊР·СѓСЏ РѕР±РµСЂС‚РѕС‡РЅС‹С… Р±РёР±Р»РёРѕС‚РµРє
 //
-//вызов утилиты выглядит следующим образом:
+//РІС‹Р·РѕРІ СѓС‚РёР»РёС‚С‹ РІС‹РіР»СЏРґРёС‚ СЃР»РµРґСѓСЋС‰РёРј РѕР±СЂР°Р·РѕРј:
 //     testtool login password put/get src_path dst_path
 //
-//После вызова put соответствующий файл src_path загружается на
-//сервер по пути dst_path.
-//После вызова get файл, находящийся на сервере под именем src_path
-//скачивается и сохраняется по локальному пути dst_path.
+//РџРѕСЃР»Рµ РІС‹Р·РѕРІР° put СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋС‰РёР№ С„Р°Р№Р» src_path Р·Р°РіСЂСѓР¶Р°РµС‚СЃСЏ РЅР°
+//СЃРµСЂРІРµСЂ РїРѕ РїСѓС‚Рё dst_path.
+//РџРѕСЃР»Рµ РІС‹Р·РѕРІР° get С„Р°Р№Р», РЅР°С…РѕРґСЏС‰РёР№СЃСЏ РЅР° СЃРµСЂРІРµСЂРµ РїРѕРґ РёРјРµРЅРµРј src_path
+//СЃРєР°С‡РёРІР°РµС‚СЃСЏ Рё СЃРѕС…СЂР°РЅСЏРµС‚СЃСЏ РїРѕ Р»РѕРєР°Р»СЊРЅРѕРјСѓ РїСѓС‚Рё dst_path.
 
-//Авторизация производится вручную через сгенерированный access token 
+//РђРІС‚РѕСЂРёР·Р°С†РёСЏ РїСЂРѕРёР·РІРѕРґРёС‚СЃСЏ РІСЂСѓС‡РЅСѓСЋ С‡РµСЂРµР· СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅРЅС‹Р№ access token 
 
 #include <stdio.h>
 #include <locale.h>
@@ -45,14 +45,14 @@ int main(int argc, char* argv[]) {
     
     char token[128]="\0"; 
     
-    printf("%s", "Введите access token: ");
+    printf("%s", "Р’РІРµРґРёС‚Рµ access token: ");
     scanf_s("%69s", token, sizeof(token));
 
     char auth_bearer[128] = "Authorization: Bearer ";
     strcat_s(auth_bearer, 128, token);
 
 
-    /*          ОСНОВАНАЯ ЛОГИКА              */
+    /*          РћРЎРќРћР’РђРќРђРЇ Р›РћР“РРљРђ              */
     if (strcmp(argv[3], "put") == 0)
     {
         FILE* file_handler;
@@ -60,18 +60,18 @@ int main(int argc, char* argv[]) {
         err = fopen_s(&file_handler, argv[4], "rb");
         if (err == 0)
         {
-            printf("%s", "Файл открыт успешно");
+            printf("%s", "Р¤Р°Р№Р» РѕС‚РєСЂС‹С‚ СѓСЃРїРµС€РЅРѕ");
 
-            //определим размер файла 
+            //РѕРїСЂРµРґРµР»РёРј СЂР°Р·РјРµСЂ С„Р°Р№Р»Р° 
             long int file_size = filesize(file_handler);
 
-            //Выделим буфер для считывания файла
+            //Р’С‹РґРµР»РёРј Р±СѓС„РµСЂ РґР»СЏ СЃС‡РёС‚С‹РІР°РЅРёСЏ С„Р°Р№Р»Р°
             void* buffer = malloc(file_size);
-            fread(buffer, sizeof(char), file_size, file_handler);//считали файл в буфер 
-            fclose(file_handler); //закроем файл 
+            fread(buffer, sizeof(char), file_size, file_handler);//СЃС‡РёС‚Р°Р»Рё С„Р°Р№Р» РІ Р±СѓС„РµСЂ 
+            fclose(file_handler); //Р·Р°РєСЂРѕРµРј С„Р°Р№Р» 
 
 
-            CURL* curl_handle = curl_easy_init();//начинаем сессию 
+            CURL* curl_handle = curl_easy_init();//РЅР°С‡РёРЅР°РµРј СЃРµСЃСЃРёСЋ 
 
 
             char path_drbx[256] = "\0";
@@ -82,13 +82,13 @@ int main(int argc, char* argv[]) {
 
             if (curl_handle)
             {
-                /*          Блок формирования HTTP запроса на отправку двоичного файла            */
+                /*          Р‘Р»РѕРє С„РѕСЂРјРёСЂРѕРІР°РЅРёСЏ HTTP Р·Р°РїСЂРѕСЃР° РЅР° РѕС‚РїСЂР°РІРєСѓ РґРІРѕРёС‡РЅРѕРіРѕ С„Р°Р№Р»Р°            */
 
-                curl_easy_setopt(curl_handle, CURLOPT_POST, 1L); // устанавливаем вид запроса POST 
-                curl_easy_setopt(curl_handle, CURLOPT_URL, "https://content.dropboxapi.com/2/files/upload");// задаем  url адрес
+                curl_easy_setopt(curl_handle, CURLOPT_POST, 1L); // СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРј РІРёРґ Р·Р°РїСЂРѕСЃР° POST 
+                curl_easy_setopt(curl_handle, CURLOPT_URL, "https://content.dropboxapi.com/2/files/upload");// Р·Р°РґР°РµРј  url Р°РґСЂРµСЃ
                 curl_easy_setopt(curl_handle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
 
-                //установим заголовки 
+                //СѓСЃС‚Р°РЅРѕРІРёРј Р·Р°РіРѕР»РѕРІРєРё 
                 struct curl_slist* list = NULL;
                 list = curl_slist_append(list, auth_bearer);
                 list = curl_slist_append(list, "Transfer-Encoding: chunked");
@@ -96,9 +96,9 @@ int main(int argc, char* argv[]) {
                 list = curl_slist_append(list, "Content-Type: application/octet-stream");
 
                 curl_easy_setopt(curl_handle, CURLOPT_HTTPHEADER, list);
-                curl_easy_setopt(curl_handle, CURLOPT_POSTFIELDS, buffer);//данные из буфера для отправки на сервер 
+                curl_easy_setopt(curl_handle, CURLOPT_POSTFIELDS, buffer);//РґР°РЅРЅС‹Рµ РёР· Р±СѓС„РµСЂР° РґР»СЏ РѕС‚РїСЂР°РІРєРё РЅР° СЃРµСЂРІРµСЂ 
                 curl_easy_setopt(curl_handle, CURLOPT_POSTFIELDSIZE, file_size);
-                curl_easy_setopt(curl_handle, CURLOPT_VERBOSE, 1L);//вывод отчетной информации 
+                curl_easy_setopt(curl_handle, CURLOPT_VERBOSE, 1L);//РІС‹РІРѕРґ РѕС‚С‡РµС‚РЅРѕР№ РёРЅС„РѕСЂРјР°С†РёРё 
 
                 CURLcode res = curl_easy_perform(curl_handle);
                 free(buffer);
@@ -107,45 +107,45 @@ int main(int argc, char* argv[]) {
         }
         else
         {
-            printf("%s", "Не удалось найти файл");
+            printf("%s", "РќРµ СѓРґР°Р»РѕСЃСЊ РЅР°Р№С‚Рё С„Р°Р№Р»");
         }
 
     }
     else if (strcmp(argv[3], "get") == 0)
     {
-        CURL* curl_handle = curl_easy_init();//начинаем сессию 
+        CURL* curl_handle = curl_easy_init();//РЅР°С‡РёРЅР°РµРј СЃРµСЃСЃРёСЋ 
 
         char path_drbx[256] = "\0";
         strcat_s(path_drbx, 256, "Dropbox-API-Arg: {\"path\": \"");
         strcat_s(path_drbx, 256, argv[4]);
         strcat_s(path_drbx, 256, "\"}");
 
-        /*          Блок формирования HTTP запроса на получение двоичного файла            */
+        /*          Р‘Р»РѕРє С„РѕСЂРјРёСЂРѕРІР°РЅРёСЏ HTTP Р·Р°РїСЂРѕСЃР° РЅР° РїРѕР»СѓС‡РµРЅРёРµ РґРІРѕРёС‡РЅРѕРіРѕ С„Р°Р№Р»Р°            */
         if (curl_handle)
         {
-            curl_easy_setopt(curl_handle, CURLOPT_HTTPGET, 1L); // устанавливаем вид запроса GET 
-            curl_easy_setopt(curl_handle, CURLOPT_URL, "https://content.dropboxapi.com/2/files/download");// задаем  url адрес
+            curl_easy_setopt(curl_handle, CURLOPT_HTTPGET, 1L); // СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРј РІРёРґ Р·Р°РїСЂРѕСЃР° GET 
+            curl_easy_setopt(curl_handle, CURLOPT_URL, "https://content.dropboxapi.com/2/files/download");// Р·Р°РґР°РµРј  url Р°РґСЂРµСЃ
 
-            //установим заголовки 
+            //СѓСЃС‚Р°РЅРѕРІРёРј Р·Р°РіРѕР»РѕРІРєРё 
             struct curl_slist* list = NULL;
             list = curl_slist_append(list, auth_bearer);
             list = curl_slist_append(list, path_drbx);
             curl_easy_setopt(curl_handle, CURLOPT_HTTPHEADER, list);
-            curl_easy_setopt(curl_handle, CURLOPT_VERBOSE, 1L);//вывод отчетной информации 
+            curl_easy_setopt(curl_handle, CURLOPT_VERBOSE, 1L);//РІС‹РІРѕРґ РѕС‚С‡РµС‚РЅРѕР№ РёРЅС„РѕСЂРјР°С†РёРё 
 
-            //откроем файл для записи получаемых данных 
+            //РѕС‚РєСЂРѕРµРј С„Р°Р№Р» РґР»СЏ Р·Р°РїРёСЃРё РїРѕР»СѓС‡Р°РµРјС‹С… РґР°РЅРЅС‹С… 
             FILE* new_file;
             fopen_s(&new_file, argv[5], "wb");
             curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_data);
             curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, new_file);
 
-            //отправить запрос 
+            //РѕС‚РїСЂР°РІРёС‚СЊ Р·Р°РїСЂРѕСЃ 
             CURLcode res = curl_easy_perform(curl_handle);
             fclose(new_file);
         }
     }
     else
-        printf("%s\n", "Введен некоректный запрос");
+        printf("%s\n", "Р’РІРµРґРµРЅ РЅРµРєРѕСЂРµРєС‚РЅС‹Р№ Р·Р°РїСЂРѕСЃ");
         
     
     return 0;
